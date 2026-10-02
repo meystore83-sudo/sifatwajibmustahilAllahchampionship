@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allah's Attributes Championship</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --secondary: #E11D48;
+            --accent: #F59E0B;
+            --bg-dark: #0F172A;
+            --gold: #FFD700;
+            --silver: #C0C0C0;
+            --bronze: #CD7F32;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-dark);
+            color: white;
+            overflow-x: hidden;
+            /* Islamic Geometric-inspired subtle background */
+            background-image: 
+                radial-gradient(circle at 50% 0%, #1e293b 0%, transparent 70%),
+                radial-gradient(circle at 10% 100%, #3730a3 0%, transparent 50%),
+                linear-gradient(to right, #0f172a, #020617);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-game {
+            background: linear-gradient(135deg, var(--primary), #3730A3);
+            border: 2px solid rgba(255,255,255,0.2);
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 800;
+        }
+        .btn-game:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.5);
+            background: linear-gradient(135deg, #6366F1, var(--primary));
+        }
+        .btn-game:active {
+            transform: translateY(1px);
+        }
+
+        .text-glow {
+            text-shadow: 0 0 10px rgba(255,255,255,0.5), 0 0 20px var(--accent);
+        }
+
+        /* 30 Box Grid Styles */
+        .box-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+        }
+        @media (max-width: 768px) {
+            .box-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 480px) {
+            .box-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .challenge-box {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #1E293B, #0F172A);
+            border: 2px solid #334155;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .challenge-box:hover:not(.used) {
+            border-color: var(--accent);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--accent);
+        }
+        .challenge-box.used {
+            background: #111827;
+            border-color: #1F2937;
+            color: #374151;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .challenge-box.used::after {
+            content: 'USED';
+            position: absolute;
+            font-size: 1rem;
+            color: #EF4444;
+            transform: rotate(-45deg);
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+
+        /* Crossword Styles */
+        .crossword-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 2.5rem);
+            grid-template-rows: repeat(10, 2.5rem);
+            gap: 2px;
+            justify-content: center;
+        }
+        .cw-cell {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.25rem;
+            position: relative;
+        }
+        .cw-cell.active {
+            background: white;
+            color: black;
+            border: 2px solid #334155;
+        }
+        .cw-cell.highlight {
+            background: #FEF08A;
+            border-color: #EAB308;
+        }
+        .cw-number {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            font-size: 0.6rem;
+            line-height: 1;
+            color: #475569;
+        }
+
+        /* Animations */
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop-in {
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px var(--accent); }
+            50% { box-shadow: 0 0 30px var(--accent), 0 0 10px white; }
+        }
+        .animate-glow {
+            animation: pulse-glow 2s infinite;
+        }
+
+        /* Confetti Canvas */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0F172A; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        .hidden-screen { display: none !important; }
+    </style>
+</head>
+<body class="flex flex-col">
+
+    <!-- GLOBAL SCOREBOARD & HEADER -->
+    <header class="fixed top-0 left-0 w-full z-40 glass-panel border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 py-2 flex flex-col md:flex-row justify-between items-center gap-2">
+            <div class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-200 tracking-wider">
+                🏆 CHAMPIONSHIP
+            </div>
+            
+            <!-- Scores -->
+            <div class="flex gap-4 md:gap-8 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 justify-center">
+                <div class="text-center">
+                    <div class="text-xs text-slate-400 font-bold">KELOMPOK 1</div>
+                    <div class="text-2xl font-black text-white" id="score-team-1">0</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-xs text-slate-400 font-bold">KELOMPOK 2</div>
+                    <div class="text-2xl font-black text-white" id="score-team-2">0</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-xs text-slate-400 font-bold">KELOMPOK 3</div>
+                    <div class="text-2xl font-black text-white" id="score-team-3">0</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-xs text-slate-400 font-bold">KELOMPOK 4</div>
+                    <div class="text-2xl font-black text-white" id="score-team-4">0</div>
+                </div>
+            </div>
+
+            <!-- Admin Toggle -->
+            <button onclick="toggleAdminPanel()" class="bg-white/10 hover:bg-white/20 p-2 rounded-lg text-sm font-bold transition-colors">
+                ⚙️ CONTROL
+            </button>
+        </div>
+
+        <!-- Admin Control Panel (Hidden by default) -->
+        <div id="admin-panel" class="hidden border-t border-white/10 bg-slate-900/90 p-4">
+            <div class="max-w-7xl mx-auto">
+                <h3 class="text-yellow-400 font-bold mb-2">MANUAL SCORE CONTROL</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- Team 1 Controls -->
+                    <div class="bg-slate-800 p-2 rounded border border-slate-700">
+                        <div class="text-sm font-bold mb-1">K-1</div>
+                        <div class="flex gap-1 flex-wrap">
+                            <button onclick="addScore(0, 10)" class="bg-green-600/80 hover:bg-green-600 px-2 py-1 rounded text-xs font-bold">+10</button>
+                            <button onclick="addScore(0, 20)" class="bg-green-600/80 hover:bg-green-600 px-2 py-1 rounded text-xs font-bold">+20</button>
+                            <button onclick="addScore(0, 30)" class="bg-green-600/80 hover:bg-green-600 px-2 py-1 rounded text-xs font-bold">+30</button>
+                            <button onclick="addScore(0, -10)" class="bg-red-600/80 hover:bg-red-600 px-2 py-1 rounded text-xs font-bold">-10</button>
+                        </div>
+                    </div>
+                    <!-- Team 2 Controls -->
+                    <div class="bg-slate-800 p-2 rounded border border-slate-700">
+                        <div class="text-sm font-bold mb-1">K-2</div>
+                        <div class="flex gap-1 flex-wrap">
+                            <button onclick="addScore(1, 10)" class="bg-green-600/80 hover:bg-green-600 px-2 py-1 rounded text-xs font-bold">+10</button>
+                            <button onclick="addScore(1, 20)" class="bg-green-600/80 hover:bg-green-600 px-2 py-1 rounded text-xs font-bold">+20</button>
+                            <button onclick="addScore(1, 30)" class="bg-green-600/80 hover:bg-green-600 px-2 py-1 rounded text-xs font-bold">+30</button>
+                            <button onclick="addScore(1, -10)" class="bg-red-600/80 hover:bg-red-600 px-2 py-1 rounded text-xs font-bold">-10</button>
+                        </div>
+                    </div>
+                    <!-- Team 3 Controls -->
+                    <div class="bg-slate-800 p-2 rounded border border-slate-700">
+                        <div class="text-sm font-bold mb-1">K-3</div>
+                        <div class="flex gap-1 flex-wrap">
+                            <button onclick="addScore(2, 10)" class="bg-green-600/80 hover:bg-green-600 px-2 py-1 rounded text-xs font-bold">+10</button>
+                            <button onclick="addScore(2, 20)" class="bg-green-600/80 hover:bg-green-600 px-2 py-1 rounded text-xs font-bold">+20</button>
+                            <button onclick="addScore(2, 30)" class="bg-green-600/80 hover:bg-green-600 px-2 py-1 rounded text-xs font-bold">+30</button>
+                            <button onclick="addScore(2, -10)" class="bg-red-600/80 hover:bg-red-600 px-2 py-1 rounded text-xs font-bold">-10</button>
+                        </div>
+                    </div>
+                    <!-- Team 4 Controls -->
+                    <div class="bg-slate-800 p-2 rounded border border-slate-700">
+                        <div class="text-sm font-bold mb-1">K-4</div>
+                        <div class="flex gap-1 flex-wrap">
+                            <button onclick="addScore(3, 10)" class="bg-green-600/80 hover:bg-green-600 px-2 py-1 rounded text-xs font-bold">+10</button>
+                            <button onclick="addScore(3, 20)" class="bg-green-600/80 hover:bg-green-600 px-2 py-1 rounded text-xs font-bold">+20</button>
+                            <button onclick="addScore(3, 30)" class="bg-green-600/80 hover:bg-green-600 px-2 py-1 rounded text-xs font-bold">+30</button>
+                            <button onclick="addScore(3, -10)" class="bg-red-600/80 hover:bg-red-600 px-2 py-1 rounded text-xs font-bold">-10</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 flex gap-4">
+                    <button onclick="resetScores()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded font-bold text-sm">RESET ALL SCORES</button>
+                    <button onclick="toggleAdminPanel()" class="bg-slate-600 hover:bg-slate-700 px-4 py-2 rounded font-bold text-sm">CLOSE PANEL</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow pt-24 pb-20 px-4 w-full max-w-7xl mx-auto flex flex-col items-center justify-center relative z-10">
+
+        <!-- SCREEN: HOME -->
+        <section id="screen-home" class="w-full text-center flex flex-col items-center justify-center animate-pop-in">
+            <div class="glass-panel p-8 md:p-16 rounded-3xl w-full max-w-4xl relative overflow-hidden">
+                <!-- Decorative Elements -->
+                <div class="absolute -top-20 -right-20 w-64 h-64 bg-indigo-600 rounded-full mix-blend-multiply filter blur-3xl opacity-50"></div>
+                <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-rose-600 rounded-full mix-blend-multiply filter blur-3xl opacity-50"></div>
+                
+                <h2 class="text-2xl md:text-3xl text-yellow-400 font-bold tracking-widest mb-2 uppercase text-glow">Akidah Akhlak Kelas X</h2>
+                <h1 class="text-5xl md:text-7xl font-black mb-6 leading-tight text-white">
+                    ALLAH'S ATTRIBUTES <br> 
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">CHAMPIONSHIP</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-indigo-200 mb-10 font-medium">
+                    Petualangan Menaklukkan Sifat Wajib & Sifat Mustahil Allah Swt.
+                </p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 text-sm font-bold">
+                    <div class="bg-white/10 p-4 rounded-xl border border-white/20">🏆 4 KELOMPOK</div>
+                    <div class="bg-white/10 p-4 rounded-xl border border-white/20">⚡ 2 FASE</div>
+                    <div class="bg-white/10 p-4 rounded-xl border border-white/20">🧠 MEMORY & 30 BOX</div>
+                    <div class="bg-white/10 p-4 rounded-xl border border-white/20">🏆 FINAL SCOREBOARD</div>
+                </div>
+
+                <button onclick="initAudio(); navigate('screen-phase1')" class="btn-game text-2xl px-12 py-6 rounded-full shadow-2xl animate-glow">
+                    START CHAMPIONSHIP
+                </button>
+            </div>
+        </section>
+
+        <!-- SCREEN: PHASE 1 (MEMORY) -->
+        <section id="screen-phase1" class="w-full flex flex-col items-center hidden-screen animate-pop-in">
+            <div class="text-center mb-4">
+                <span class="bg-indigo-600 text-white px-4 py-1 rounded-full text-sm font-bold tracking-widest mb-2 inline-block">FASE 1</span>
+                <h2 class="text-3xl md:text-4xl font-black text-yellow-400 mb-2">THE MEMORY CHALLENGE</h2>
+                <p class="text-sm md:text-base text-slate-300 max-w-3xl mx-auto">
+                    Perhatikan baik-baik! 10 kotak akan terbuka selama 15 detik. Hafalkan urutannya beserta artinya.
+                    Setelah tertutup, kelompok yang paling cepat maju memiliki 60 detik untuk menyusun kembali. (Ronde <span id="round-indicator">1/2</span>)
+                </p>
+            </div>
+
+            <div class="glass-panel p-4 md:p-6 rounded-3xl w-full max-w-6xl">
+                <div class="flex justify-between items-center mb-4">
+                    <button onclick="startMemoryRound()" id="btn-start-memory" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl font-bold text-xl transition-all shadow-lg mx-auto block">
+                        ▶ MULAI ROUND
+                    </button>
+                    <div id="memory-timer" class="text-5xl font-black text-rose-500 hidden mx-auto">15</div>
+                </div>
+
+                <!-- Drop zones grid -->
+                <div id="memory-grid" class="grid grid-cols-2 md:grid-cols-5 gap-2 md:gap-4 mb-6">
+                    <!-- Cards injected by JS -->
+                </div>
+
+                <!-- Draggable choices -->
+                <div id="draggable-container" class="grid grid-cols-2 md:grid-cols-5 gap-2 min-h-[80px] p-4 bg-slate-800/50 rounded-xl border-2 border-dashed border-slate-600 hidden" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <!-- Items injected by JS -->
+                </div>
+
+                <div id="memory-controls" class="hidden text-center mt-6">
+                    <div id="p1-answer-timer" class="text-2xl font-bold text-rose-500 mb-4">WAKTU MENJAWAB: 60s</div>
+                    <button onclick="checkMemoryAnswer()" class="bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 px-8 py-3 rounded-xl font-black text-white text-xl shadow-[0_0_15px_rgba(245,158,11,0.5)]">
+                        CEK JAWABAN
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN: PHASE 2 (30 BOX) -->
+        <section id="screen-phase2" class="w-full flex flex-col items-center hidden-screen animate-pop-in">
+            <div class="text-center mb-8">
+                <span class="bg-indigo-600 text-white px-4 py-1 rounded-full text-sm font-bold tracking-widest mb-4 inline-block">FASE 2</span>
+                <h2 class="text-4xl md:text-5xl font-black text-yellow-400 mb-2">30 BOX CHALLENGE</h2>
+                <p class="text-lg text-slate-300 max-w-2xl mx-auto">
+                    Buka Kotak. Baca Kasus. Tebak Sifatnya!
+                </p>
+            </div>
+
+            <div class="glass-panel p-6 md:p-8 rounded-3xl w-full max-w-5xl">
+                <div id="box-grid" class="box-grid">
+                    <!-- 30 boxes injected by JS -->
+                </div>
+                
+                <div class="mt-8 text-center">
+                    <button onclick="navigate('screen-final')" class="bg-indigo-600 hover:bg-indigo-700 px-8 py-4 rounded-xl font-bold text-white text-xl transition-all shadow-lg">
+                        LANJUT FINAL SCOREBOARD ➔
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN: FINAL SCOREBOARD -->
+        <section id="screen-final" class="w-full flex flex-col items-center hidden-screen animate-pop-in min-h-[70vh] justify-center">
+            <h2 class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 mb-12 text-glow text-center">
+                🏆 FINAL SCOREBOARD 🏆
+            </h2>
+
+            <div id="podium-container" class="flex items-end justify-center gap-2 md:gap-6 h-80 w-full max-w-4xl mx-auto mb-12">
+                <!-- Podium injected by JS -->
+            </div>
+
+            <button onclick="navigate('screen-home')" class="bg-slate-700 hover:bg-slate-600 px-6 py-3 rounded-xl font-bold transition-all">
+                🏠 KEMBALI KE BERANDA
+            </button>
+        </section>
+
+    </main>
+
+    <!-- FOOTER NAVIGATION -->
+    <footer class="fixed bottom-0 left-0 w-full glass-panel border-t border-white/10 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-center gap-2 md:gap-4 overflow-x-auto">
+            <button onclick="navigate('screen-home')" class="nav-btn bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded text-sm font-bold whitespace-nowrap">🏠 HOME</button>
+            <button onclick="navigate('screen-phase1')" class="nav-btn bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded text-sm font-bold whitespace-nowrap">🧠 FASE 1</button>
+            <button onclick="navigate('screen-phase2')" class="nav-btn bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded text-sm font-bold whitespace-nowrap">🎯 FASE 2</button>
+            <button onclick="navigate('screen-final')" class="nav-btn bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded text-sm font-bold whitespace-nowrap">📊 FINAL</button>
+        </div>
+    </footer>
+
+    <!-- GLOBAL MODALS -->
+    
+    <!-- Phase 2 Question Modal -->
+    <div id="modal-q" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-slate-900 border-2 border-indigo-500 rounded-3xl p-6 md:p-10 w-full max-w-3xl relative shadow-[0_0_50px_rgba(79,70,229,0.3)]">
+            <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-indigo-600 text-white px-6 py-2 rounded-full font-black text-xl border-4 border-slate-900">
+                KOTAK <span id="modal-q-number">01</span>
+            </div>
+            
+            <div class="mt-4 mb-8">
+                <p id="modal-q-text" class="text-2xl md:text-4xl text-center font-bold leading-tight text-white"></p>
+            </div>
+
+            <!-- Student Input Area -->
+            <div id="modal-q-student-area" class="mb-8 text-center">
+                <input type="text" id="modal-q-input" placeholder="Ketik nama sifat di sini..." class="w-full md:w-2/3 bg-slate-800 border-2 border-slate-600 rounded-xl px-6 py-4 text-2xl text-center font-bold text-yellow-400 focus:outline-none focus:border-yellow-400 mb-4 uppercase">
+                <button onclick="checkPhase2Answer()" class="w-full md:w-2/3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white font-black text-2xl py-4 rounded-xl shadow-lg transition transform hover:scale-105">
+                    SUBMIT JAWABAN
+                </button>
+            </div>
+
+            <!-- Result Feedback -->
+            <div id="modal-q-feedback" class="hidden text-center mb-8">
+                <div id="feedback-icon" class="text-6xl mb-4"></div>
+                <h3 id="feedback-text" class="text-4xl font-black mb-2"></h3>
+                <p class="text-xl text-slate-300">Jawaban yang benar:</p>
+                <p id="feedback-correct-answer" class="text-4xl font-black text-yellow-400 text-glow mt-2 blur-sm cursor-pointer hover:blur-none transition-all duration-500" onclick="this.classList.remove('blur-sm')">(Klik untuk melihat)</p>
+            </div>
+
+            <!-- Teacher Controls -->
+            <div id="modal-q-controls" class="border-t border-slate-700 pt-6 mt-6">
+                <button onclick="closeModalQ(false)" class="w-full bg-slate-700 hover:bg-slate-600 py-3 rounded font-bold text-lg mb-2">
+                    TUTUP & LEWATI SOAL (TANPA POIN)
+                </button>
+                <button onclick="closeModalQ(true)" class="w-full bg-transparent text-slate-500 hover:text-white py-2 rounded font-bold text-sm underline">
+                    BATAL (KEMBALI KE LAYAR)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Modal (replaces native alert) -->
+    <div id="modal-alert" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-600 rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl">
+            <h3 id="alert-title" class="text-2xl font-bold text-white mb-2">Pemberitahuan</h3>
+            <p id="alert-message" class="text-slate-300 mb-6"></p>
+            <button onclick="closeAlert()" class="bg-indigo-600 hover:bg-indigo-500 w-full py-3 rounded-xl font-bold text-white">OK</button>
+        </div>
+    </div>
+
+    <!-- Modal Who Answers -->
+    <div id="modal-who-answers" class="fixed inset-0 bg-black/90 z-[90] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-slate-900 border-2 border-yellow-500 rounded-3xl p-6 md:p-10 w-full max-w-xl text-center shadow-[0_0_50px_rgba(234,179,8,0.3)] animate-pop-in">
+            <h2 class="text-3xl md:text-4xl font-black text-yellow-400 mb-2">SIAPA YANG MENJAWAB?</h2>
+            <p class="text-slate-300 mb-8 text-lg">Pilih kelompok yang akan menjawab!</p>
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="selectTeamForWhoAnswers(0)" class="bg-indigo-600 hover:bg-indigo-500 py-6 rounded-xl font-black text-2xl shadow-lg hover:scale-105 transition">KLP 1</button>
+                <button onclick="selectTeamForWhoAnswers(1)" class="bg-rose-600 hover:bg-rose-500 py-6 rounded-xl font-black text-2xl shadow-lg hover:scale-105 transition">KLP 2</button>
+                <button onclick="selectTeamForWhoAnswers(2)" class="bg-emerald-600 hover:bg-emerald-500 py-6 rounded-xl font-black text-2xl shadow-lg hover:scale-105 transition">KLP 3</button>
+                <button onclick="selectTeamForWhoAnswers(3)" class="bg-amber-600 hover:bg-amber-500 py-6 rounded-xl font-black text-2xl shadow-lg hover:scale-105 transition">KLP 4</button>
+            </div>
+            <button onclick="cancelWhoAnswers()" class="mt-6 text-slate-400 hover:text-white underline">Batal</button>
+        </div>
+    </div>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <script>
+        // --- DATA DEFINITIONS ---
+
+        const attributesBank = [
+            { name: "Wujud", meaning: "Ada" },
+            { name: "Qidam", meaning: "Terdahulu" },
+            { name: "Baqa", meaning: "Kekal" },
+            { name: "Mukhalafatuhu li al-hawadisi", meaning: "Berbeda dgn makhluk" },
+            { name: "Qiyamuhu Binafsihi", meaning: "Berdiri sendiri" },
+            { name: "Wahdaniyah", meaning: "Esa/Tunggal" },
+            { name: "Qudrat", meaning: "Berkuasa" },
+            { name: "Iradat", meaning: "Berkehendak" },
+            { name: "Ilmu", meaning: "Mengetahui" },
+            { name: "Hayat", meaning: "Hidup" },
+            { name: "Sama'", meaning: "Mendengar" },
+            { name: "Basar", meaning: "Melihat" },
+            { name: "Kalam", meaning: "Berfirman" },
+            { name: "Adam", meaning: "Tiada" },
+            { name: "Huduts", meaning: "Baru" },
+            { name: "Fana", meaning: "Musnah" },
+            { name: "Mumatsalatu lil hawaditsi", meaning: "Serupa makhluk" },
+            { name: "Ihtiyaju lighairihi", meaning: "Butuh yang lain" },
+            { name: "Ta'adud", meaning: "Berbilang" },
+            { name: "Ajzun", meaning: "Lemah" },
+            { name: "Karahah", meaning: "Terpaksa" },
+            { name: "Jahlun", meaning: "Bodoh" },
+            { name: "Mautun", meaning: "Mati" },
+            { name: "Shamamun", meaning: "Tuli" },
+            { name: "Ama", meaning: "Buta" },
+            { name: "Bakamun", meaning: "Bisu" }
+        ];
+
+        const phase2Questions = [
+            { q: "Ketika sendirian di kamar, Aisyah tetap yakin bahwa Allah Swt. selalu ada.", a: "Wujud" },
+            { q: "Manusia dilahirkan dan memiliki permulaan, sedangkan Allah Swt. tidak memiliki permulaan.", a: "Qidam" },
+            { q: "Meskipun seluruh makhluk akan mati, Allah Swt. tidak akan pernah berakhir.", a: "Baqa" },
+            { q: "Ketika melihat manusia yang membutuhkan makanan dan minuman, kita menyadari bahwa Allah Swt. tidak membutuhkan semua itu.", a: "Qiyamuhu binafsihi" },
+            { q: "Ahmad tidak menyamakan Allah Swt. dengan manusia karena Allah Swt. berbeda dengan seluruh makhluk.", a: "Mukhalafatu li al-hawadisi" },
+            { q: "Ketika melihat banyaknya manusia yang memiliki keinginan berbeda, kita tetap yakin bahwa Tuhan hanya satu, yaitu Allah Swt.", a: "Wahdaniyah" },
+            { q: "Saat menghadapi masalah yang sangat berat, Hasan tetap yakin bahwa Allah Swt. mampu memberikan pertolongan.", a: "Qudrat" },
+            { q: "Ketika keinginannya belum tercapai, Fatimah tetap yakin bahwa Allah Swt. memiliki kehendak atas segala sesuatu.", a: "Iradat" },
+            { q: "Rina menjaga perilakunya karena yakin Allah Swt. mengetahui semua perbuatannya, termasuk yang dilakukan secara diam-diam.", a: "Ilmu" },
+            { q: "Ketika melihat manusia yang sedang sakit, kita menyadari bahwa Allah Swt. tidak pernah mengalami sakit atau kematian.", a: "Hayat" },
+            { q: "Saat berdoa dengan suara sangat pelan, Ali yakin Allah Swt. tetap mendengar doanya.", a: "Sama'" },
+            { q: "Ketika berada di tempat yang gelap dan tersembunyi, seseorang yakin bahwa Allah Swt. tetap melihat segala sesuatu.", a: "Basar" },
+            { q: "Ketika membaca Al-Qur'an, seorang muslim meyakini bahwa Allah Swt. memiliki sifat Kalam.", a: "Kalam" },
+            { q: "Rafi berkata, “Allah Swt. tidak ada karena aku tidak dapat melihat-Nya.” Pernyataan tersebut menunjukkan sifat yang mustahil bagi Allah Swt.", a: "Adam" },
+            { q: "Seseorang berkata bahwa Allah Swt. baru ada setelah menciptakan alam semesta. Pernyataan tersebut menunjukkan sifat mustahil.", a: "Huduts" },
+            { q: "Seseorang mengatakan bahwa suatu saat Allah Swt. akan mengalami kehancuran seperti makhluk. Pernyataan tersebut menunjukkan sifat mustahil.", a: "Fana" },
+            { q: "Budi mengatakan bahwa Allah Swt. sama seperti manusia karena sama-sama membutuhkan makanan. Pernyataan tersebut menunjukkan sifat mustahil.", a: "Mumatsalatu lil hawaditsi" },
+            { q: "Seseorang berkata bahwa Allah Swt. membutuhkan manusia agar tetap ada. Pernyataan tersebut menunjukkan sifat mustahil.", a: "Ihtiyaju lighairihi" },
+            { q: "Seseorang percaya bahwa terdapat dua Tuhan yang sama-sama mengatur alam semesta. Keyakinan tersebut bertentangan dengan sifat Allah Swt.", a: "Ta'adud" },
+            { q: "Ketika melihat manusia yang tidak mampu melakukan sesuatu, kita memahami bahwa Allah Swt. tidak mungkin memiliki kelemahan seperti makhluk.", a: "Ajzun" },
+            { q: "Seseorang mengatakan bahwa Allah Swt. tidak dapat menentukan apa yang terjadi di alam semesta. Pernyataan tersebut menunjukkan sifat mustahil.", a: "Karahah" },
+            { q: "Seorang siswa berkata, “Ada hal yang tidak diketahui Allah Swt.” Pernyataan tersebut menunjukkan sifat mustahil.", a: "Jahlun" },
+            { q: "Seseorang mengatakan bahwa Allah Swt. dapat mengalami kematian. Pernyataan tersebut menunjukkan sifat mustahil.", a: "Mautun" },
+            { q: "Seseorang berkata bahwa Allah Swt. tidak dapat mendengar suara manusia. Pernyataan tersebut menunjukkan sifat mustahil.", a: "Shamamun" },
+            { q: "Seseorang beranggapan bahwa Allah Swt. tidak dapat melihat perbuatan manusia.", a: "Ama" },
+            { q: "Seseorang mengatakan bahwa Allah Swt. tidak dapat berfirman. Pernyataan tersebut menunjukkan sifat mustahil.", a: "Bakamun" },
+            { q: "Ketika melihat bayi yang baru lahir, kita menyadari bahwa Allah Swt. tidak mengalami proses kelahiran seperti makhluk.", a: "Huduts" },
+            { q: "Ketika seseorang merasa tidak ada yang mengetahui perbuatannya di tempat tersembunyi, ia lupa bahwa Allah Swt. mengetahui semuanya.", a: "Ilmu" },
+            { q: "Ketika seluruh manusia membutuhkan pertolongan, Allah Swt. tidak membutuhkan pertolongan dari siapa pun.", a: "Qiyamuhu binafsihi" },
+            { q: "Saat melihat berbagai macam makhluk dengan bentuk yang berbeda-beda, seorang muslim yakin bahwa Allah Swt. tidak menyerupai satu pun dari mereka.", a: "Mukhalafatu li al-hawadisi" }
+        ];
+
+        // --- GLOBAL STATE ---
+        let scores = [0, 0, 0, 0];
+        let currentScreen = 'screen-home';
+        
+        // Phase 1 State
+        let memoryTimer;
+        let p1CurrentSequence = [];
+        let p1RoundCount = 1;
+        let p1ActiveTeam = null;
+        let p1AnswerInterval; // Timer limit untuk menyusun jawaban
+
+        // Phase 2 State
+        let p2UsedBoxes = new Set();
+        let p2CurrentBox = null;
+
+        // --- STREAMING_CHUNK:Implementing Audio System... ---
+        
+        let audioCtx;
+        function initAudio() {
+            if(!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playTick() {
+            if(!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(1000, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        function playCorrect() {
+            if(!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+            osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.2);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.5);
+        }
+
+        function playWrong() {
+            if(!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        }
+
+        // --- STREAMING_CHUNK:Implementing Core Functions (Navigation, Score, Alerts)... ---
+
+        let alertCloseCallback = null;
+        function customAlert(title, message, callback = null) {
+            document.getElementById('alert-title').innerText = title;
+            document.getElementById('alert-message').innerText = message;
+            document.getElementById('modal-alert').classList.remove('hidden');
+            alertCloseCallback = callback;
+        }
+        function closeAlert() {
+            document.getElementById('modal-alert').classList.add('hidden');
+            if(alertCloseCallback) {
+                alertCloseCallback();
+                alertCloseCallback = null;
+            }
+        }
+
+        let currentWhoAnswersCallback = null;
+        function openWhoAnswers(callback) {
+            currentWhoAnswersCallback = callback;
+            document.getElementById('modal-who-answers').classList.remove('hidden');
+        }
+        
+        function selectTeamForWhoAnswers(teamIndex) {
+            document.getElementById('modal-who-answers').classList.add('hidden');
+            if(currentWhoAnswersCallback) {
+                currentWhoAnswersCallback(teamIndex);
+                currentWhoAnswersCallback = null;
+            }
+        }
+
+        function cancelWhoAnswers() {
+            document.getElementById('modal-who-answers').classList.add('hidden');
+            currentWhoAnswersCallback = null;
+        }
+
+        function toggleAdminPanel() {
+            const panel = document.getElementById('admin-panel');
+            panel.classList.toggle('hidden');
+        }
+
+        function updateScoreDisplay() {
+            for(let i=0; i<4; i++) {
+                const el = document.getElementById(`score-team-${i+1}`);
+                el.innerText = scores[i];
+                // Pop animation
+                el.classList.remove('scale-150', 'text-green-400');
+                void el.offsetWidth; // trigger reflow
+                el.classList.add('scale-150', 'text-green-400', 'transition-all', 'duration-300');
+                setTimeout(() => el.classList.remove('scale-150', 'text-green-400'), 300);
+            }
+        }
+
+        function addScore(teamIndex, amount) {
+            scores[teamIndex] += amount;
+            if(scores[teamIndex] < 0) scores[teamIndex] = 0; // Prevent negative? Optional, but safe.
+            updateScoreDisplay();
+        }
+
+        function resetScores() {
+            scores = [0, 0, 0, 0];
+            updateScoreDisplay();
+            p2UsedBoxes.clear();
+            renderBoxGrid();
+            customAlert("Reset Berhasil", "Semua skor dan progres telah direset.");
+            toggleAdminPanel();
+        }
+
+        function navigate(screenId) {
+            document.querySelectorAll('main > section').forEach(sec => {
+                sec.classList.add('hidden-screen');
+            });
+            document.getElementById(screenId).classList.remove('hidden-screen');
+            currentScreen = screenId;
+            window.scrollTo(0,0);
+
+            if(screenId === 'screen-final') buildPodium();
+        }
+
+        // --- STREAMING_CHUNK:Implementing Phase 1 (Memory Challenge) Logic... ---
+
+        function startMemoryRound() {
+            if (p1RoundCount > 2) {
+                navigate('screen-phase2');
+                return;
+            }
+            
+            document.getElementById('round-indicator').innerText = p1RoundCount + "/2";
+            
+            const grid = document.getElementById('memory-grid');
+            const choicesContainer = document.getElementById('draggable-container');
+            const controls = document.getElementById('memory-controls');
+            const btnStart = document.getElementById('btn-start-memory');
+            const timerEl = document.getElementById('memory-timer');
+            
+            // Pick 10 random attributes
+            let shuffled = [...attributesBank].sort(() => 0.5 - Math.random());
+            p1CurrentSequence = shuffled.slice(0, 10);
+
+            // Render drop zones initially showing the answers
+            grid.innerHTML = '';
+            choicesContainer.innerHTML = '';
+            
+            for(let i=0; i<10; i++) {
+                const dropZone = document.createElement('div');
+                dropZone.className = 'drop-zone glass-panel p-2 rounded-xl flex flex-col items-center justify-center h-28 border-2 border-dashed border-slate-500 bg-slate-800 transition-colors';
+                dropZone.dataset.index = i;
+                dropZone.ondrop = drop;
+                dropZone.ondragover = allowDrop;
+                
+                // Card logic
+                const card = document.createElement('div');
+                card.className = 'drag-item bg-indigo-600 w-full h-full flex flex-col items-center justify-center rounded-lg text-center cursor-move shadow-md select-none border border-indigo-400';
+                card.id = `drag-${i}`;
+                card.draggable = true;
+                card.ondragstart = drag;
+                card.innerHTML = `<span class="font-bold text-sm md:text-base leading-tight px-1">${p1CurrentSequence[i].name}</span><span class="text-xs md:text-sm text-yellow-300 mt-1">(${p1CurrentSequence[i].meaning})</span>`;
+                
+                dropZone.appendChild(card);
+                grid.appendChild(dropZone);
+            }
+
+            btnStart.classList.add('hidden');
+            timerEl.classList.remove('hidden');
+            controls.classList.add('hidden');
+            choicesContainer.classList.add('hidden');
+
+            let timeLeft = 15; 
+            timerEl.innerText = timeLeft;
+            
+            clearInterval(memoryTimer);
+            memoryTimer = setInterval(() => {
+                playTick();
+                timeLeft--;
+                timerEl.innerText = timeLeft;
+                if(timeLeft <= 5) timerEl.classList.add('animate-pulse', 'text-red-500');
+                
+                if(timeLeft <= 0) {
+                    clearInterval(memoryTimer);
+                    timerEl.classList.add('hidden');
+                    timerEl.classList.remove('animate-pulse', 'text-red-500');
+                    
+                    // Move cards to draggable container and shuffle them
+                    let cards = Array.from(grid.querySelectorAll('.drag-item'));
+                    cards.sort(() => 0.5 - Math.random()); // Acak urutan di bawah
+                    
+                    cards.forEach(card => {
+                        choicesContainer.appendChild(card);
+                    });
+
+                    choicesContainer.classList.remove('hidden');
+                    
+                    // Munculkan jendela (modal) pemilihan tim via global helper
+                    openWhoAnswers(selectTeamForMemory);
+                }
+            }, 1000);
+        }
+
+        function selectTeamForMemory(teamIndex) {
+            p1ActiveTeam = teamIndex;
+            document.getElementById('memory-controls').classList.remove('hidden');
+            
+            let timeLeft = 60;
+            const timerEl = document.getElementById('p1-answer-timer');
+            timerEl.innerText = `WAKTU MENJAWAB: ${timeLeft}s`;
+            
+            clearInterval(p1AnswerInterval);
+            p1AnswerInterval = setInterval(() => {
+                playTick();
+                timeLeft--;
+                timerEl.innerText = `WAKTU MENJAWAB: ${timeLeft}s`;
+                if(timeLeft <= 0) {
+                    clearInterval(p1AnswerInterval);
+                    resetMemoryAttempt("WAKTU HABIS! Berikan kesempatan kepada kelompok yang lain.");
+                }
+            }, 1000);
+        }
+
+        function resetMemoryAttempt(msg) {
+            // Kembalikan semua kartu yang sudah ditaruh di kotak
+            const grid = document.getElementById('memory-grid');
+            const container = document.getElementById('draggable-container');
+            grid.querySelectorAll('.drop-zone').forEach(zone => {
+                if(zone.children.length > 0) {
+                    container.appendChild(zone.children[0]);
+                }
+            });
+            
+            document.getElementById('memory-controls').classList.add('hidden');
+            customAlert("BELUM TEPAT!", msg, () => {
+                // Panggil ulang jendela siapa yang menjawab setelah ditekan OK
+                openWhoAnswers(selectTeamForMemory);
+            });
+        }
+
+        // --- Drag and Drop Handlers ---
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("text");
+            var draggedElement = document.getElementById(data);
+            
+            // Find closest drop zone (jika user drop ke text di dalam div)
+            let dropTarget = ev.target;
+            while (dropTarget && !dropTarget.classList.contains('drop-zone') && dropTarget.id !== 'draggable-container') {
+                dropTarget = dropTarget.parentElement;
+            }
+
+            if (dropTarget) {
+                if (dropTarget.classList.contains('drop-zone')) {
+                    if (dropTarget.children.length === 0) {
+                        dropTarget.appendChild(draggedElement);
+                    } else {
+                        // Jika kotak sudah terisi, tukar posisinya (Swap UX)
+                        let existingItem = dropTarget.children[0];
+                        draggedElement.parentNode.appendChild(existingItem);
+                        dropTarget.appendChild(draggedElement);
+                    }
+                } else if (dropTarget.id === 'draggable-container') {
+                    dropTarget.appendChild(draggedElement);
+                }
+            }
+        }
+
+        function checkMemoryAnswer() {
+            const dropZones = document.querySelectorAll('#memory-grid .drop-zone');
+            let allCorrect = true;
+            let filledCount = 0;
+
+            dropZones.forEach((zone, index) => {
+                if (zone.children.length > 0) {
+                    filledCount++;
+                    const item = zone.children[0];
+                    // Validasi: ID item harus sama dengan index kotak
+                    if (item.id !== `drag-${index}`) {
+                        allCorrect = false;
+                    }
+                } else {
+                    allCorrect = false;
+                }
+            });
+
+            if (filledCount < 10) {
+                customAlert("Belum Lengkap", "Silakan tarik semua 10 jawaban ke kotak yang tersedia terlebih dahulu!");
+                return;
+            }
+
+            if (allCorrect) {
+                playCorrect();
+                clearInterval(p1AnswerInterval); // Hentikan timer jawab
+                addScore(p1ActiveTeam, 50); // Poin bagi kelompok jika benar
+                customAlert("BENAR SEKALI! 🎉", `Luar biasa! Kelompok ${p1ActiveTeam + 1} mendapatkan +50 Poin.`);
+                
+                p1RoundCount++;
+                document.getElementById('memory-controls').classList.add('hidden');
+                document.getElementById('draggable-container').classList.add('hidden');
+                
+                if (p1RoundCount > 2) {
+                    setTimeout(() => {
+                        customAlert("Fase 1 Selesai", "2 Ronde telah dilewati, mari beralih ke Fase 2!");
+                        navigate('screen-phase2');
+                    }, 2000);
+                } else {
+                    document.getElementById('btn-start-memory').innerText = "MULAI RONDE 2";
+                    document.getElementById('btn-start-memory').classList.remove('hidden');
+                }
+            } else {
+                playWrong();
+                // Jika salah, panggil fungsi reset untuk melempar kesempatan ke tim lain
+                clearInterval(p1AnswerInterval);
+                resetMemoryAttempt("Jawaban salah. Silakan berikan kesempatan kepada kelompok yang lain.");
+            }
+        }
+
+        // --- STREAMING_CHUNK:Implementing Phase 2 (30 Box Challenge) Logic... ---
+
+        function renderBoxGrid() {
+            const grid = document.getElementById('box-grid');
+            grid.innerHTML = '';
+            for(let i=0; i<30; i++) {
+                const box = document.createElement('div');
+                const num = (i+1).toString().padStart(2, '0');
+                box.className = `challenge-box ${p2UsedBoxes.has(i) ? 'used' : ''}`;
+                box.innerText = num;
+                if(!p2UsedBoxes.has(i)) {
+                    box.onclick = () => openBoxModal(i);
+                }
+                grid.appendChild(box);
+            }
+        }
+
+        function openBoxModal(index) {
+            if(p2UsedBoxes.has(index)) return;
+            p2CurrentBox = index;
+            
+            const q = phase2Questions[index];
+            document.getElementById('modal-q-number').innerText = (index+1).toString().padStart(2, '0');
+            document.getElementById('modal-q-text').innerText = `"${q.q}"`;
+            
+            // Reset modal state
+            document.getElementById('modal-q-input').value = '';
+            document.getElementById('modal-q-student-area').classList.remove('hidden');
+            document.getElementById('modal-q-feedback').classList.add('hidden');
+            document.getElementById('feedback-correct-answer').classList.add('blur-sm'); // Reset blur
+            
+            document.getElementById('modal-q').classList.remove('hidden');
+            document.getElementById('modal-q-input').focus();
+        }
+
+        function normalizeText(text) {
+            // Remove punctuation and extra spaces, lowercase
+            return text.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+        }
+
+        function checkPhase2Answer() {
+            const input = document.getElementById('modal-q-input').value;
+            if(!input) {
+                customAlert("Perhatian", "Silakan ketik jawaban terlebih dahulu.");
+                return;
+            }
+
+            const correctAns = phase2Questions[p2CurrentBox].a;
+            const normInput = normalizeText(input);
+            const normCorrect = normalizeText(correctAns);
+            
+            // Allow variations specifically for tricky ones
+            let isCorrect = (normInput === normCorrect);
+            if(normCorrect === 'mukhalafatu li alhawadisi' || normCorrect === 'mukhalafatuhu li alhawadisi') {
+                isCorrect = normInput.includes('mukhalafat');
+            }
+            if(normCorrect.includes('qiyamuhu binafsihi')) {
+                isCorrect = normInput.includes('qiyam');
+            }
+            if(normCorrect.includes('mumatsalatu')) {
+                isCorrect = normInput.includes('mumatsala');
+            }
+
+            // Setelah mengetik jawaban, buka jendela siapa yang menjawab
+            openWhoAnswers((teamIdx) => {
+                const feedbackArea = document.getElementById('modal-q-feedback');
+                const studentArea = document.getElementById('modal-q-student-area');
+                const controlsArea = document.getElementById('modal-q-controls');
+                const icon = document.getElementById('feedback-icon');
+                const text = document.getElementById('feedback-text');
+                const correctEl = document.getElementById('feedback-correct-answer');
+
+                studentArea.classList.add('hidden');
+                if (controlsArea) controlsArea.classList.add('hidden');
+                feedbackArea.classList.remove('hidden');
+                correctEl.innerText = correctAns.toUpperCase();
+
+                if(isCorrect) {
+                    playCorrect();
+                    icon.innerHTML = '🎉';
+                    text.innerText = 'BENAR! +10 POIN';
+                    text.className = 'text-5xl font-black mb-2 text-green-400 text-glow animate-bounce';
+                    addScore(teamIdx, 10); // Otomatis berikan poin
+                    
+                    // Tutup otomatis setelah 2.5 detik
+                    setTimeout(() => {
+                        closeModalQ(false);
+                        if (controlsArea) controlsArea.classList.remove('hidden');
+                    }, 2500);
+
+                } else {
+                    playWrong();
+                    icon.innerHTML = '❌';
+                    text.innerText = 'BELUM TEPAT!';
+                    text.className = 'text-5xl font-black mb-2 text-red-500';
+                    
+                    // Kembali beri kesempatan untuk kelompok lain setelah 2.5 detik
+                    setTimeout(() => {
+                        feedbackArea.classList.add('hidden');
+                        studentArea.classList.remove('hidden');
+                        if (controlsArea) controlsArea.classList.remove('hidden');
+                        document.getElementById('modal-q-input').value = '';
+                    }, 2500);
+                }
+            });
+        }
+
+        function closeModalQ(cancel) {
+            document.getElementById('modal-q').classList.add('hidden');
+            if(!cancel && p2CurrentBox !== null) {
+                p2UsedBoxes.add(p2CurrentBox);
+                renderBoxGrid();
+            }
+            p2CurrentBox = null;
+        }
+
+        // --- STREAMING_CHUNK:Implementing Final Scoreboard and Confetti... ---
+
+        function buildPodium() {
+            const container = document.getElementById('podium-container');
+            container.innerHTML = '';
+            
+            // Create array of objects to sort
+            const results = scores.map((score, index) => ({ team: index + 1, score: score }));
+            results.sort((a, b) => b.score - a.score); // Descending
+
+            // Order for visual podium: [2, 1, 3, 4] for center high
+            const podiumOrder = [
+                results[1] || null, // 2nd place
+                results[0] || null, // 1st place
+                results[2] || null, // 3rd place
+                results[3] || null  // 4th place
+            ];
+
+            const heights = ['h-48', 'h-72', 'h-40', 'h-24'];
+            const colors = [
+                'bg-gradient-to-t from-slate-400 to-slate-300', // 2nd Silver
+                'bg-gradient-to-t from-yellow-500 to-yellow-300 shadow-[0_0_30px_rgba(234,179,8,0.5)]', // 1st Gold
+                'bg-gradient-to-t from-amber-700 to-amber-600', // 3rd Bronze
+                'bg-slate-700' // 4th
+            ];
+
+            podiumOrder.forEach((res, idx) => {
+                if(!res) return;
+                
+                const col = document.createElement('div');
+                col.className = 'flex flex-col items-center justify-end w-1/4 animate-pop-in';
+                col.style.animationDelay = `${idx * 0.2}s`;
+
+                // Badge/Score
+                const badge = document.createElement('div');
+                badge.className = 'mb-2 text-center';
+                badge.innerHTML = `
+                    <div class="text-xs md:text-sm font-bold text-slate-300">KELOMPOK ${res.team}</div>
+                    <div class="text-xl md:text-3xl font-black text-white text-glow">${res.score}</div>
+                `;
+
+                // Block
+                const block = document.createElement('div');
+                block.className = `w-full rounded-t-xl ${heights[idx]} ${colors[idx]} flex items-center justify-center border-t border-white/30 relative overflow-hidden`;
+                
+                // Rank number
+                const rankLabels = ['2ND', '1ST', '3RD', '4TH'];
+                block.innerHTML = `<span class="text-2xl md:text-4xl font-black text-black/20 transform rotate-90">${rankLabels[idx]}</span>`;
+
+                col.appendChild(badge);
+                col.appendChild(block);
+                container.appendChild(col);
+            });
+
+            startConfetti();
+        }
+
+        // --- Simple Confetti Implementation ---
+        let confettiLoop;
+        function startConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const pieces = [];
+            const colors = ['#facc15', '#ef4444', '#3b82f6', '#10b981', '#a855f7'];
+
+            for(let i=0; i<150; i++) {
+                pieces.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    w: Math.random() * 10 + 5,
+                    h: Math.random() * 10 + 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vy: Math.random() * 3 + 2,
+                    vx: Math.random() * 2 - 1,
+                    rot: Math.random() * 360,
+                    rotV: Math.random() * 5 - 2.5
+                });
+            }
+
+            function render() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                pieces.forEach(p => {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+                    ctx.restore();
+
+                    p.y += p.vy;
+                    p.x += p.vx;
+                    p.rot += p.rotV;
+
+                    if(p.y > canvas.height) {
+                        p.y = -20;
+                        p.x = Math.random() * canvas.width;
+                    }
+                });
+                confettiLoop = requestAnimationFrame(render);
+            }
+            
+            cancelAnimationFrame(confettiLoop);
+            render();
+            
+            // Auto stop after 10s to save resources
+            setTimeout(() => {
+                cancelAnimationFrame(confettiLoop);
+                ctx.clearRect(0,0,canvas.width, canvas.height);
+            }, 10000);
+        }
+
+        // Window resize handle for canvas
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('confetti-canvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+
+        // --- INIT ---
+        window.onload = () => {
+            // Acak pertanyaan Phase 2 di awal permainan
+            phase2Questions.sort(() => 0.5 - Math.random());
+            renderBoxGrid();
+            updateScoreDisplay();
+        };
+
+    </script>
+</body>
+</html>
